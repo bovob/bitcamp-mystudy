@@ -8,14 +8,8 @@
 
 #include <stdio.h>
 
-int main() {
+int main()
+{
     printf("Hello, World!\n");
-
-    int a = 100;
-
-    if (a < 100) {
-        prontf("Test Error\n");
-    }
-
     return 0;
 }
