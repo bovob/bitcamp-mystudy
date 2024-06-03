@@ -18,6 +18,6 @@ public class Test04 {
         System.out.println('똥'); // 문자 리터럴
         System.out.println('\uB625'); // 유니코드 문자 리터럴
         System.out.println(' '); // 문자 리터럴
-        System.out.println('\u00A9'); // 유니코드 문자 리터럴
+        System.out.println('\u00A9'); // 유니코드 문자 리터럴 ©
     }
 }

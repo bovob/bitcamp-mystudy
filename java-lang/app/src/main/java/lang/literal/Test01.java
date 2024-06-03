@@ -8,6 +8,9 @@ package study.lang.literal;
 // 가
 // 가나다
 // true
+// 
+// 기본 자료형(Primitive Data Type)의 값을 표현(Literal)하는 방법을 설명하라.
+//
 
 public class Test01 {
     public static void main(String[] args) {
