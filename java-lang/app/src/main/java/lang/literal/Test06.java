@@ -8,5 +8,5 @@ public class Test06 {
     public static void main(String[] args) {
         // 코드를 완성하라.
         System.out.println(12.375f); // 부동소수점이 메모리에 어떻게 올라가는지 확인한다.
-    }
+    } 
 }
