@@ -559,3 +559,6 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,visualstudiocode,eclipse,intellij,java,c,c++,node,gradle,maven
+
+# .gitignore에서 제외할 파일은 !를 앞에 쓰면된다.
+# ignore에서 제외는 올리겠다는 뜻
