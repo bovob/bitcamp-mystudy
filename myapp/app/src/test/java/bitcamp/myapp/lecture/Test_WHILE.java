@@ -1,4 +1,4 @@
-package bitcamp.myapp;
+package bitcamp.myapp.lecture;
 
 public class Test_WHILE {
     public static void main(String[] args) {
