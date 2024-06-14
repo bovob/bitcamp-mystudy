@@ -1,26 +1,16 @@
 package bitcamp.myapp;
 
-import java.util.Scanner;
-
 public class App {
 
-    //문자열 입력
-    static Scanner keyboardScanner = new Scanner(System.in);
 
-    //문자값
-    static String boldAnsi = "\033[1m";
-    static String redAnsi = "\033[31m";
-    static String resetAnsi = "\033[0m";
-    static String line = "----------------------------------";
-
-    //Menu 배열
     static String[] mainMenus = new String[]{"회원", "팀", "프로젝트", "게시판", "도움말", "종료"};
     static String[][] subMenus = {
-        {"회원등록", "목록", "조회", "변경", "삭제"},
-        {"팀등록", "목록", "조회", "변경", "삭제"},
-        {"프로젝트등록", "목록", "조회", "변경", "삭제"},
-        {"게시판등록", "목록", "조회", "변경", "삭제"},
+        {"등록", "목록", "조회", "변경", "삭제"},
+        {"등록", "목록", "조회", "변경", "삭제"},
+        {"등록", "목록", "조회", "변경", "삭제"},
+        {"등록", "목록", "조회", "변경", "삭제"}
     };
+
 
     public static void main(String[] args) {
 
@@ -29,7 +19,7 @@ public class App {
         String command;
         while (true) {
             try {
-                command = prompt("메인");
+                command = Prompt.input("메인>");
 
                 if (command.equals("menu")) {
                     printMenu();
@@ -56,28 +46,16 @@ public class App {
 
         System.out.println("종료합니다.");
 
-        keyboardScanner.close();
+        Prompt.close();
     }
 
-    //입력받기
-    static String prompt(String title) {
-        System.out.printf("%s> ", title);
-        return keyboardScanner.nextLine();
-    }
-
-    //메뉴정합성
-    static boolean isValidateMenu(int menuNo, String[] menus) {
-        return menuNo >= 1 && menuNo <= menus.length;
-    }
-
-    //메뉴타이틀 반환
-    static String getMenuTitle(int menuNo, String[] menus) {
-        return isValidateMenu(menuNo, menus) ? menus[menuNo - 1] : null;
-    }
-
-    //메인메뉴
     static void printMenu() {
+        String boldAnsi = "\033[1m";
+        String redAnsi = "\033[31m";
+        String resetAnsi = "\033[0m";
+
         String appTitle = "[팀 프로젝트 관리 시스템]";
+        String line = "----------------------------------";
 
         System.out.println(boldAnsi + line + resetAnsi);
         System.out.println(boldAnsi + appTitle + resetAnsi);
@@ -94,45 +72,101 @@ public class App {
         System.out.println(boldAnsi + line + resetAnsi);
     }
 
-    //서브메뉴
     static void printSubMenu(String menuTitle, String[] menus) {
-        System.out.println(boldAnsi + line + resetAnsi);
-        System.out.println(boldAnsi + "[" + menuTitle + "]" + resetAnsi);
-
+        System.out.printf("[%s]\n", menuTitle);
         for (int i = 0; i < menus.length; i++) {
             System.out.printf("%d. %s\n", (i + 1), menus[i]);
         }
-        System.out.print(boldAnsi + redAnsi + "9. 이전\n" + resetAnsi);
-        System.out.println(boldAnsi + line + resetAnsi);
+        System.out.println("9. 이전");
     }
 
-    //서브메뉴 프로세스
+    static boolean isValidateMenu(int menuNo, String[] menus) {
+        return menuNo >= 1 && menuNo <= menus.length;
+    }
+
+    static String getMenuTitle(int menuNo, String[] menus) {
+        return isValidateMenu(menuNo, menus) ? menus[menuNo - 1] : null;
+    }
+
     static void processMenu(String menuTitle, String[] menus) {
         printSubMenu(menuTitle, menus);
-
         while (true) {
-            String command = prompt("메인/" + menuTitle);
+            String command = Prompt.input(String.format("메인/%s>", menuTitle));
             if (command.equals("menu")) {
                 printSubMenu(menuTitle, menus);
-//                continue;
-            } else if (command.equals("9")) {   // 이전
+                continue;
+            } else if (command.equals("9")) { // 이전 메뉴 선택
                 break;
             }
+
             try {
                 int menuNo = Integer.parseInt(command);
                 String subMenuTitle = getMenuTitle(menuNo, menus);
                 if (subMenuTitle == null) {
                     System.out.println("유효한 메뉴 번호가 아닙니다.");
                 } else {
-                    System.out.println(subMenuTitle);
+                    switch (menuTitle) {
+                        case "회원":
+                            UserCommand.executeUserCommand(subMenuTitle);
+                            break;
+                        case "팀":
+                            executeTeamCommand(subMenuTitle);
+                            break;
+                        case "프로젝트":
+                            executeProjectCommand(subMenuTitle);
+                            break;
+                        case "게시판":
+                            executeBoardCommand(subMenuTitle);
+                            break;
+                        default:
+                            System.out.printf("%s 메뉴의 명령을 처리할 수 없습니다.\n", menuTitle);
+                    }
                 }
             } catch (NumberFormatException ex) {
                 System.out.println("숫자로 메뉴 번호를 입력하세요.");
             }
         }
     }
+
+
+    static void executeTeamCommand(String command) {
+        System.out.printf("팀 %s\n", command);
+
+        final int MAX_SIZE = 100;               //static
+        String[] teams = new String[MAX_SIZE];    //static
+        int teamLength = 0;                     //static
+        switch (command) {
+
+            case "등록":
+                String teamName = Prompt.input("팀명? ");
+                System.out.printf("%s", teamName);
+                teams[teamLength++] = teamName;
+                
+//                System.out.println("등록 했습니다.");
+//                System.out.println("없는 팀원입니다.");
+
+                break;
+            case "목록":
+                System.out.println("목록");
+                break;
+            case "조회":
+                System.out.println("조회");
+                break;
+            case "변경":
+                System.out.println("변경");
+                break;
+            case "삭제":
+                System.out.println("삭제");
+                break;
+        }
+    }
+
+    static void executeProjectCommand(String command) {
+        System.out.printf("프로젝트 %s\n", command);
+    }
+
+    static void executeBoardCommand(String command) {
+        System.out.printf("게시판 %s\n", command);
+    }
 }
-
-
-
 
