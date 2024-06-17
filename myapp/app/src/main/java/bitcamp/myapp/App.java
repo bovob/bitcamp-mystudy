@@ -131,34 +131,6 @@ public class App {
 
     static void executeTeamCommand(String command) {
         System.out.printf("팀 %s\n", command);
-
-        final int MAX_SIZE = 100;               //static
-        String[] teams = new String[MAX_SIZE];    //static
-        int teamLength = 0;                     //static
-        switch (command) {
-
-            case "등록":
-                String teamName = Prompt.input("팀명? ");
-                System.out.printf("%s", teamName);
-                teams[teamLength++] = teamName;
-                
-//                System.out.println("등록 했습니다.");
-//                System.out.println("없는 팀원입니다.");
-
-                break;
-            case "목록":
-                System.out.println("목록");
-                break;
-            case "조회":
-                System.out.println("조회");
-                break;
-            case "변경":
-                System.out.println("변경");
-                break;
-            case "삭제":
-                System.out.println("삭제");
-                break;
-        }
     }
 
     static void executeProjectCommand(String command) {
@@ -169,4 +141,3 @@ public class App {
         System.out.printf("게시판 %s\n", command);
     }
 }
-
