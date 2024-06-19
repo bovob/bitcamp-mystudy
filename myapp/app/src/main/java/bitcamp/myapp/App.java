@@ -1,5 +1,6 @@
 package bitcamp.myapp;
 
+import bitcamp.myapp.command.BoardCommand;
 import bitcamp.myapp.command.ProjectCommand;
 import bitcamp.myapp.command.UserCommand;
 import bitcamp.myapp.util.Prompt;
@@ -8,11 +9,8 @@ public class App {
 
 
     static String[] mainMenus = new String[]{"회원", "프로젝트", "게시판", "도움말", "종료"};
-    static String[][] subMenus = {
-        {"등록", "목록", "조회", "변경", "삭제"},
-        {"등록", "목록", "조회", "변경", "삭제"},
-        {"등록", "목록", "조회", "변경", "삭제"},
-    };
+    static String[][] subMenus = {{"등록", "목록", "조회", "변경", "삭제"}, {"등록", "목록", "조회", "변경", "삭제"},
+                                  {"등록", "목록", "조회", "변경", "삭제"}, {"등록", "목록", "조회", "변경", "삭제"}};
 
 
     public static void main(String[] args) {
@@ -116,7 +114,7 @@ public class App {
                             ProjectCommand.executeProjectCommand(subMenuTitle);
                             break;
                         case "게시판":
-                            executeBoardCommand(subMenuTitle);
+                            BoardCommand.executeBoardCommand(subMenuTitle);
                             break;
                         default:
                             System.out.printf("%s 메뉴의 명령을 처리할 수 없습니다.\n", menuTitle);

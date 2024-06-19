@@ -2,13 +2,12 @@ package bitcamp.myapp.vo;
 
 public class Project {
 
-    private final User[] members = new User[10];   //팀원
-    private String title;                          //프로젝트명
-    private String description;                    //설명
-    private String startDate;                      //시작일
-    private String endDate;                        //마감일
-    private int memberSize;                        //팀원 증감
-
+    private final User[] members = new User[10];
+    private String title;
+    private String description;
+    private String startDate;
+    private String endDate;
+    private int memberSize;
 
     public String getTitle() {
         return title;
@@ -43,8 +42,8 @@ public class Project {
     }
 
     public boolean containsMember(User user) {
-        for (int i = 0; i < memberSize; i++) {
-            User member = members[i];
+        for (int i = 0; i < this.memberSize; i++) {
+            User member = this.members[i];
             if (member.getName().equals(user.getName())) {
                 return true;
             }
@@ -53,21 +52,21 @@ public class Project {
     }
 
     public void addMember(User user) {
-        members[memberSize++] = user;
+        this.members[this.memberSize++] = user;
     }
 
-    public User getMember(int index) {
-        return members[index];
-    }
-
-    public int counterMembers() {
+    public int countMembers() {
         return this.memberSize;
     }
 
+    public User getMember(int index) {
+        return this.members[index];
+    }
+
     public void deleteMember(int index) {
-        for (int i = index + 1; i < memberSize; i++) {
-            members[i - 1] = members[i];
+        for (int i = index + 1; i < this.memberSize; i++) {
+            this.members[i - 1] = this.members[i];
         }
-        members[--memberSize] = null;
+        this.members[--this.memberSize] = null;
     }
 }

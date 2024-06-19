@@ -1,7 +1,7 @@
 package bitcamp.myapp.command;
 
-import bitcamp.myapp.vo.User;
 import bitcamp.myapp.util.Prompt;
+import bitcamp.myapp.vo.User;
 
 public class UserCommand {
 
@@ -11,24 +11,20 @@ public class UserCommand {
 
     public static void executeUserCommand(String command) {
         System.out.printf("[%s]\n", command);
-
         switch (command) {
             case "등록":
                 addUser();
                 break;
-
             case "조회":
                 viewUser();
                 break;
             case "목록":
                 listUser();
                 break;
-
             case "변경":
                 updateUser();
                 break;
-
-            case "삭제":  // 다음 값을 앞으로 당긴다.
+            case "삭제":
                 deleteUser();
                 break;
         }
@@ -58,9 +54,9 @@ public class UserCommand {
             return;
         }
         User user = users[userNo - 1];
-        System.out.printf("이름 %s\n", user.getName());
-        System.out.printf("이메일 %s\n", user.getEmail());
-        System.out.printf("연락처 %s\n", user.getTel());
+        System.out.printf("이름: %s\n", user.getName());
+        System.out.printf("이메일: %s\n", user.getEmail());
+        System.out.printf("연락처: %s\n", user.getTel());
     }
 
     private static void updateUser() {
@@ -74,10 +70,10 @@ public class UserCommand {
         user.setEmail(Prompt.input("이메일(%s)?", user.getEmail()));
         user.setPassword(Prompt.input("암호?"));
         user.setTel(Prompt.input("연락처(%s)?", user.getTel()));
-        System.out.println("변경했습니다.");
+        System.out.println("변경 했습니다.");
     }
 
-    static void deleteUser() {
+    private static void deleteUser() {
         int userNo = Prompt.inputInt("회원번호?");
         if (userNo < 1 || userNo > userLength) {
             System.out.println("없는 회원입니다.");
@@ -86,18 +82,14 @@ public class UserCommand {
         for (int i = userNo; i < userLength; i++) {
             users[i - 1] = users[i];
         }
-        userLength--;
-        users[userLength] = null;
+        users[--userLength] = null;
+        System.out.println("삭제 했습니다.");
     }
 
-
-    //유저 넘버 확인 후 유저정보 Return
     public static User findByNo(int userNo) {
         if (userNo < 1 || userNo > userLength) {
-            System.out.println("없는 회원입니다.");
             return null;
         }
         return users[userNo - 1];
     }
-
 }
