@@ -2,6 +2,9 @@ package testcamp.myapp;
 
 import java.util.InputMismatchException;
 import testcamp.myapp.util.Prompt;
+import testcamp.myapp.vo.User;
+import testcamp.myapp.command.UserCommand;
+
 
 public class App {
 
@@ -66,7 +69,7 @@ public class App {
         }
         System.out.println("종료합니다.");
 
-
+        Prompt.close();
     }
 
 
@@ -120,11 +123,27 @@ public class App {
             try {
                 // 서브입력 받기
                 int menuNo = Integer.parseInt(command);
+                // 입력받은거 서브메뉴로
                 String subMenuTitle = getMenuTitle(menuNo, menus);
                 if (subMenuTitle == null) {
                     System.out.println("유효한 번호를 입력하세요.");
                 } else {
-                    System.out.println(subMenuTitle);
+                    // 메뉴타이틀(서브메뉴)를 스위치로 받아서 각자 실행
+                    switch (menuTitle) {
+                        case "회원":
+                            UserCommand.executeUserCommand(subMenuTitle);
+                            break;
+                        case "프로젝트":
+                            //                            ProjectCommand.executeProjectCommand(subMenuTitle);
+                            System.out.println("잘못된 접근입니다.");
+                            break;
+                        case "게시판":
+                            //                            BoardCommand.executeBoardCommand(subMenuTitle);
+                            System.out.println("잘못된 접근입니다.");
+                            break;
+                        default:
+                            System.out.println("잘못된 접근입니다.");
+                    }
                 }
 
             } catch (InputMismatchException | NumberFormatException exception_command) {

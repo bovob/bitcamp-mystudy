@@ -125,8 +125,4 @@ public class App {
             }
         }
     }
-
-    static void executeBoardCommand(String command) {
-        System.out.printf("게시판 %s\n", command);
-    }
 }

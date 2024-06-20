@@ -1,7 +1,6 @@
 package testcamp.myapp.util;
 
 import java.util.Scanner;
-import testcamp.myapp.App;
 
 public class Prompt {
 
