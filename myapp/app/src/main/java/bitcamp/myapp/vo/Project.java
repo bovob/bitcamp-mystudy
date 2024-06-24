@@ -1,85 +1,63 @@
 package bitcamp.myapp.vo;
 
+import bitcamp.myapp.command.ArrayList;
+
 public class Project {
 
-    private static int seqNo;
-    private final User[] members = new User[10];
-    private int no;
-    private String title;
-    private String description;
-    private String startDate;
-    private String endDate;
-    private int memberSize;
+  private static int seqNo;
 
-    public static int getNextSeqNo() {
-        return ++seqNo;
-    }
+  private int no;
+  private String title;
+  private String description;
+  private String startDate;
+  private String endDate;
+  private ArrayList members = new ArrayList();
 
-    public int getNo() {
-        return no;
-    }
+  public static int getNextSeqNo() {
+    return ++seqNo;
+  }
 
-    public void setNo(int no) {
-        this.no = no;
-    }
+  public int getNo() {
+    return no;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setNo(int no) {
+    this.no = no;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public String getStartDate() {
-        return startDate;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
+  public String getStartDate() {
+    return startDate;
+  }
 
-    public String getEndDate() {
-        return endDate;
-    }
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
+  }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
+  public String getEndDate() {
+    return endDate;
+  }
 
-    public boolean containsMember(User user) {
-        for (int i = 0; i < this.memberSize; i++) {
-            if (this.members[i] == user) {
-                return true;
-            }
-        }
-        return false;
-    }
+  public void setEndDate(String endDate) {
+    this.endDate = endDate;
+  }
 
-    public void addMember(User user) {
-        this.members[this.memberSize++] = user;
-    }
-
-    public int countMembers() {
-        return this.memberSize;
-    }
-
-    public User getMember(int index) {
-        return this.members[index];
-    }
-
-    public void deleteMember(int index) {
-        for (int i = index + 1; i < this.memberSize; i++) {
-            this.members[i - 1] = this.members[i];
-        }
-        this.members[--this.memberSize] = null;
-    }
+  public ArrayList getMembers() {
+    return members;
+  }
 }
