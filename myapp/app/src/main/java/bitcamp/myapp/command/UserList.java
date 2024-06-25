@@ -2,15 +2,15 @@ package bitcamp.myapp.command;
 
 import bitcamp.myapp.vo.User;
 
-public class UserList extends ArrayList {
+public class UserList extends LinkedList {
 
-  public User findByNo(int userNo) {
-    for (int i = 0; i < size(); i++) {
-      User user = (User) get(i);
-      if (user.getNo() == userNo) {
-        return user;
-      }
+    public User findByNo(int userNo) {
+        for (int i = 0; i < size(); i++) {
+            User user = (User) getValue(i);
+            if (user.getNo() == userNo) {
+                return user;
+            }
+        }
+        return null;
     }
-    return null;
-  }
 }
