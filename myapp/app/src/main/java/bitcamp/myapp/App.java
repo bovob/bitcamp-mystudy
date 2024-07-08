@@ -12,11 +12,11 @@ public class App {
     String[][] subMenus = {{"등록", "목록", "조회", "변경", "삭제"}, {"등록", "목록", "조회", "변경", "삭제"},
                            {"등록", "목록", "조회", "변경", "삭제"}, {"등록", "목록", "조회", "변경", "삭제"}, {}};
 
-    UserCommand userCommand = new UserCommand();
-    BoardCommand boardCommand = new BoardCommand();
-    BoardCommand noticeCommand = new BoardCommand();
-    ProjectCommand projectCommand = new ProjectCommand();
-
+    UserCommand userCommand = new UserCommand("회원");
+    BoardCommand boardCommand = new BoardCommand("게시판");
+    BoardCommand noticeCommand = new BoardCommand("공지사항");
+    ProjectCommand projectCommand = new ProjectCommand("프로젝트", userCommand.getUserList());
+    HelpCommand helpCommand = new HelpCommand();
 
     public static void main(String[] args) {
         new App().execute();
@@ -77,14 +77,6 @@ public class App {
         System.out.println(boldAnsi + line + resetAnsi);
     }
 
-    void printSubMenu(String menuTitle, String[] menus) {
-        System.out.printf("[%s]\n", menuTitle);
-        for (int i = 0; i < menus.length; i++) {
-            System.out.printf("%d. %s\n", (i + 1), menus[i]);
-        }
-        System.out.println("9. 이전");
-    }
-
     boolean isValidateMenu(int menuNo, String[] menus) {
         return menuNo >= 1 && menuNo <= menus.length;
     }
@@ -94,15 +86,9 @@ public class App {
     }
 
     void processMenu(String menuTitle, String[] menus) {
-        if (menuTitle.equals("도움말")) {
-            System.out.println("도움말입니다.");
-            return;
-        }
-        printSubMenu(menuTitle, menus);
         while (true) {
             String command = Prompt.input(String.format("메인/%s>", menuTitle));
             if (command.equals("menu")) {
-                printSubMenu(menuTitle, menus);
                 continue;
             } else if (command.equals("9")) { // 이전 메뉴 선택
                 break;
@@ -116,16 +102,19 @@ public class App {
                 } else {
                     switch (menuTitle) {
                         case "회원":
-                            userCommand.executeUserCommand(subMenuTitle);
+                            userCommand.execute();
                             break;
                         case "프로젝트":
-                            projectCommand.executeProjectCommand(subMenuTitle);
+                            projectCommand.execute();
                             break;
                         case "게시판":
-                            boardCommand.executeBoardCommand(subMenuTitle);
+                            boardCommand.execute();
                             break;
                         case "공지사항":
-                            noticeCommand.executeBoardCommand(subMenuTitle);
+                            noticeCommand.execute();
+                            break;
+                        case "도움말":
+                            helpCommand.execute();
                             break;
                         default:
                             System.out.printf("%s 메뉴의 명령을 처리할 수 없습니다.\n", menuTitle);

@@ -5,18 +5,45 @@ import bitcamp.myapp.util.Prompt;
 import bitcamp.myapp.vo.Project;
 import bitcamp.myapp.vo.User;
 
-public class ProjectCommand {
+public class ProjectCommand extends AbstractCommand {
+
 
     LinkedList projectList = new LinkedList();
     LinkedList userList;
+    String[] menus = {"등록", "목록", "조회", "변경", "삭제"};
 
-    public ProjectCommand(LinkedList userList) {
+    public ProjectCommand(String menuTitle, LinkedList userList) {
+        super(menuTitle);
         this.userList = userList;
     }
 
-    public ProjectCommand() {
-
+    @Override
+    protected String[] getMenus() {
+        return menus;
     }
+
+    @Override
+    protected void processMenu(String menuName) {
+        System.out.printf("[%s]\n", menuName);
+        switch (menuName) {
+            case "등록":
+                this.addProject();
+                break;
+            case "조회":
+                this.viewProject();
+                break;
+            case "목록":
+                this.listProject();
+                break;
+            case "변경":
+                this.updateProject();
+                break;
+            case "삭제":
+                this.deleteProject();
+                break;
+        }
+    }
+
 
     private void addMembers(Project project) {
         while (true) {
@@ -42,39 +69,15 @@ public class ProjectCommand {
     }
 
     private void deleteMembers(Project project) {
-        Object[] members = project.getMembers().toArray();
-        for (Object obj : members) {
-            int index = project.getMembers().indexOf(obj);
-            User member = (User) obj;
-            
-            String str = Prompt.input("팀원(%s) 삭제?", member.getName());
+        for (int i = 0; i < project.getMembers().size(); i++) {
+            User user = (User) project.getMembers().get(i);
+            String str = Prompt.input("팀원(%s) 삭제?", user.getName());
             if (str.equalsIgnoreCase("y")) {
-                project.getMembers().remove(index);
-                System.out.printf("'%s' 팀원을 삭제합니다.\n", member.getName());
+                project.getMembers().remove(i);
+                System.out.printf("'%s' 팀원을 삭제합니다.\n", user.getName());
             } else {
-                System.out.printf("'%s' 팀원을 유지합니다.\n", member.getName());
+                System.out.printf("'%s' 팀원을 유지합니다.\n", user.getName());
             }
-        }
-    }
-
-    public void executeProjectCommand(String command) {
-        System.out.printf("[%s]\n", command);
-        switch (command) {
-            case "등록":
-                this.addProject();
-                break;
-            case "조회":
-                this.viewProject();
-                break;
-            case "목록":
-                this.listProject();
-                break;
-            case "변경":
-                this.updateProject();
-                break;
-            case "삭제":
-                this.deleteProject();
-                break;
         }
     }
 
