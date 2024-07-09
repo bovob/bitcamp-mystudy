@@ -1,8 +1,9 @@
 package bitcamp.myapp.command;
 
 import bitcamp.myapp.util.Prompt;
+import bitcamp.myapp.util.Stack;
 
-public abstract class AbstractCommand {
+public abstract class AbstractCommand implements Command {
 
     protected String menuTitle;
 
@@ -13,6 +14,26 @@ public abstract class AbstractCommand {
     protected abstract String[] getMenus();
 
     protected abstract void processMenu(String menuName);
+
+    private String getMenuPath(Stack menuPath) {
+        StringBuilder strBuilder = new StringBuilder();
+        for (int i = 0; i < menuPath.size(); i++) {
+            if (strBuilder.length() > 0) {
+                strBuilder.append("/");
+            }
+            strBuilder.append(menuPath.get(i));
+        }
+        return strBuilder.toString();
+
+        // 기존
+        //String title = "";
+        //for (int i = 0; i < menuPath.size(); i++) {
+        //    if (title.length() > 0) {
+        //        title += "/";
+        //    }
+        //}
+        //return title;
+    }
 
     boolean isValidateMenu(int menuNo) {
         String[] menus = getMenus();
@@ -34,14 +55,16 @@ public abstract class AbstractCommand {
     }
 
 
-    public void execute() {
+    public void execute(Stack menuPath) {
+        menuPath.push(menuTitle);
         printSubMenu();
         while (true) {
-            String command = Prompt.input(String.format("메인/%s>", menuTitle));
+            String command = Prompt.input(String.format("%s>", getMenuPath(menuPath)));
             if (command.equals("menu")) {
                 printSubMenu();
                 continue;
             } else if (command.equals("9")) { // 이전 메뉴 선택
+                menuPath.pop();
                 return;
             }
 

@@ -28,4 +28,8 @@ public class Car {
   public Engine getEngine() {
     return engine;
   }
+
+  public void fuelUp(GasStation gasStation) {
+    gasStation.inject();
+  }
 }

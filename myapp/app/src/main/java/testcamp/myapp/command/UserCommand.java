@@ -1,60 +1,151 @@
 package testcamp.myapp.command;
 
-import testcamp.myapp.vo.User;
+import java.util.LinkedList;
+import bitcamp.myapp.util.Prompt;
+import bitcamp.myapp.vo.User;
+import java.util.Stack;
 
-public class UserCommand {
+public class UserCommand implements Command {
 
-    // 유저를 담을 배열 선언
-    public static int MAX_SIZE = 100;
-    public static User[] users = new User[MAX_SIZE];
-    // 유저 index index용
-    public static int userLength = 0;
+    String menuTitle;
+    String[] menus = {"등록", "목록", "조회", "변경", "삭제"};
+
+    LinkedList userList = new LinkedList();
+
+    public UserCommand(String title, LinkedList list) {
+        this.menuTitle = title;
+        this.userList = list;
+    }
 
 
-    // 실질적으로 실행
-    public static void executeUserCommand(String command) {
-        // 메뉴 출력
-        System.out.printf("[%s]\n", command);
-
-        switch (command) {
-            case "등록":
-                addUser();
+    public void execute() {
+        printSubMenu();
+        System.out.printf("[%s]\n", menuTitle);
+        while (true) {
+            String command = testcamp.myapp.util.Prompt.input(
+                String.format("%s>", getMenuPathTitle(menuPath)));
+            if (command.equals("menu")) {
+                printSubMenu();
+                continue;
+            } else if (command.equals("9")) { // 이전 메뉴 선택
                 break;
-            case "조회":
-                viewUser();
-                break;
-            case "목록":
-                listUser();
-                break;
-            case "변경":
-                updateUser();
-                break;
-            case "삭제":
-                deleteUser();
-                break;
+            }
 
+            try {
+                int menuNo = Integer.parseInt(command);
+                String subMenuTitle = getMenuTitle(menuNo, menus);
+                if (subMenuTitle == null) {
+                    System.out.println("유효한 메뉴 번호가 아닙니다.");
+                }
+                switch (subMenuTitle) {
+                    case "등록":
+                        this.addUser();
+                        break;
+                    case "조회":
+                        this.viewUser();
+                        break;
+                    case "목록":
+                        this.listUser();
+                        break;
+                    case "변경":
+                        this.updateUser();
+                        break;
+                    case "삭제":
+                        this.deleteUser();
+                        break;
+                }
+            } catch (NumberFormatException ex) {
+                System.out.println("숫자로 메뉴 번호를 입력하세요.");
+            }
+        }
+    }
+
+    private String getMenuPathTitle(Stack menuPath) {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < menuPath.size(); i++) {
+            if (str.length() > 0) {
+                str.append("/");
+            }
+            str.append(menuPath.get(i));
+        }
+        return str.toString();
+    }
+
+    boolean isValidateMenu(int menuNo, String[] menus) {
+        return menuNo >= 1 && menuNo <= menus.length;
+    }
+
+    String getMenuTitle(int menuNo, String[] menus) {
+        return isValidateMenu(menuNo, menus) ? menus[menuNo - 1] : null;
+    }
+
+    void printSubMenu() {
+        System.out.printf("[%s]\n", menuTitle);
+        for (int i = 0; i < menus.length; i++) {
+            System.out.printf("%d. %s\n", (i + 1), menus[i]);
+        }
+        System.out.println("9. 이전");
+    }
+
+    private void addUser() {
+        User user = new User();
+        user.setName(Prompt.input("이름?"));
+        user.setEmail(Prompt.input("이메일?"));
+        user.setPassword(Prompt.input("암호?"));
+        user.setTel(Prompt.input("연락처?"));
+        user.setNo(User.getNextSeqNo());
+        userList.add(user);
+    }
+
+    private void listUser() {
+        System.out.println("번호 이름 이메일");
+        for (Object obj : userList.toArray()) {
+            User user = (User) obj;
+            System.out.printf("%d %s %s\n", user.getNo(), user.getName(), user.getEmail());
+        }
+    }
+
+    private void viewUser() {
+        int userNo = Prompt.inputInt("회원번호?");
+        User user = (User) userList.get(userList.indexOf(new User(userNo)));
+        if (user == null) {
+            System.out.println("없는 회원입니다.");
+            return;
         }
 
+        System.out.printf("이름: %s\n", user.getName());
+        System.out.printf("이메일: %s\n", user.getEmail());
+        System.out.printf("연락처: %s\n", user.getTel());
     }
 
-    private static void addUser() {
-        System.out.println("유저추가");
+    private void updateUser() {
+        int userNo = Prompt.inputInt("회원번호?");
+        User user = (User) userList.get(userList.indexOf(new User(userNo)));
+        if (user == null) {
+            System.out.println("없는 회원입니다.");
+            return;
+        }
+
+        user.setName(Prompt.input("이름(%s)?", user.getName()));
+        user.setEmail(Prompt.input("이메일(%s)?", user.getEmail()));
+        user.setPassword(Prompt.input("암호?"));
+        user.setTel(Prompt.input("연락처(%s)?", user.getTel()));
+        System.out.println("변경 했습니다.");
     }
 
-    private static void viewUser() {
-        System.out.println("유저조회");
+    private void deleteUser() {
+        int userNo = Prompt.inputInt("회원번호?");
+        User deletedUser = (User) userList.get(userList.indexOf(new User(userNo)));
+        if (deletedUser != null) {
+            userList.remove(deletedUser);
+            System.out.printf("'%s' 회원을 삭제 했습니다.\n", deletedUser.getName());
+        } else {
+            System.out.println("없는 회원입니다.");
+        }
     }
 
-    private static void listUser() {
-        System.out.println("유저목록");
-    }
-
-    private static void updateUser() {
-        System.out.println("유저변경");
-    }
-
-    private static void deleteUser() {
-        System.out.println("유저삭제");
+    public LinkedList getUserList() {
+        return userList;
     }
 
 }

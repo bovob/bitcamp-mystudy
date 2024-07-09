@@ -4,13 +4,24 @@ import java.util.Scanner;
 
 public class Prompt {
 
-    // 스캐너
+    static Queue inputQueue = new Queue();
+
     static Scanner keyboardScanner = new Scanner(System.in);
 
-    public static String input(String title) {
-        // 값을 입력받는 메서드
-        System.out.printf("%s> ", title);
-        return keyboardScanner.nextLine();
+    public static String input(String format, Object... args) {
+        String promptTitle = String.format(format + " ", args);
+
+        System.out.printf(promptTitle);
+
+        String input = keyboardScanner.nextLine();
+        if (format.endsWith(">")) {
+            inputQueue.offer(promptTitle + input);
+        }
+        return input;
+    }
+
+    public static int inputInt(String format, Object... args) {
+        return Integer.parseInt(input(format, args));
     }
 
     public static void close() {

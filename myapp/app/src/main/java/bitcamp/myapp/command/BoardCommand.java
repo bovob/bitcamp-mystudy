@@ -1,6 +1,7 @@
 package bitcamp.myapp.command;
 
 import bitcamp.myapp.util.LinkedList;
+import bitcamp.myapp.util.List;
 import bitcamp.myapp.util.Prompt;
 import bitcamp.myapp.vo.Board;
 import java.util.Date;
@@ -8,12 +9,12 @@ import java.util.Date;
 public class BoardCommand extends AbstractCommand {
 
 
-    LinkedList boardList = new LinkedList();
+    private final List boardList;
+    private final String[] menus = {"등록", "목록", "조회", "변경", "삭제"};
 
-    String[] menus = {"등록", "목록", "조회", "변경", "삭제"};
-
-    public BoardCommand(String menuTitle) {
+    public BoardCommand(String menuTitle, List list) {
         super(menuTitle);
+        this.boardList = list;
     }
 
     @Override

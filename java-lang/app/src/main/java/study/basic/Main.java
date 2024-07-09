@@ -1,43 +1,29 @@
 package study.basic;
 
-class Connection {
-
-  private static Connection _inst = null;
-  private int count = 0;
-
-  static public Connection get() {
-    if (_inst == null) {
-      _inst = new Connection();
-      return _inst;
+class Parent {
+  int compute(int num) {
+    if (num <= 1) {
+      return num;
     }
-    return _inst;
+    return compute(num - 1) + compute(num - 2);
   }
+}
 
-  public void count() {
-    count++;
-  }
 
-  public int getCount() {
-    return count;
+class Child extends Parent {
+  @Override
+  int compute(int num) {
+    if (num <= 1) {
+      return num;
+    }
+    return compute(num - 1) + compute(num - 3);
   }
 }
 
 
 public class Main {
-
-  public static void main(String[] args) {
-
-    Connection conn1 = Connection.get();
-    conn1.count();
-
-    Connection conn2 = Connection.get();
-    conn2.count();
-
-    Connection conn3 = Connection.get();
-    conn3.count();
-
-    conn1.count();
-    System.out.print(conn1.getCount());
+  public static void main(String args[]) {
+    Parent obj = new Child();
+    System.out.print(obj.compute(7));
   }
-
 }

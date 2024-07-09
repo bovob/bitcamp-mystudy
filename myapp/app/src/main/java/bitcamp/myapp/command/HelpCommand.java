@@ -1,10 +1,10 @@
-package bitcamp.myapp;
+package bitcamp.myapp.command;
 
-import bitcamp.myapp.command.Command;
+import bitcamp.myapp.util.Stack;
 
 public class HelpCommand implements Command {
-    
-    public void execute() {
+
+    public void execute(Stack menuPath) {
         System.out.println("도움말 입니다.");
     }
 }

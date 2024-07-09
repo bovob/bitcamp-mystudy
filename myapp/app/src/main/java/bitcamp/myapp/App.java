@@ -1,34 +1,51 @@
 package bitcamp.myapp;
 
 import bitcamp.myapp.command.BoardCommand;
+import bitcamp.myapp.command.Command;
+import bitcamp.myapp.command.HelpCommand;
+import bitcamp.myapp.command.HistoryCommand;
 import bitcamp.myapp.command.ProjectCommand;
 import bitcamp.myapp.command.UserCommand;
+import bitcamp.myapp.util.ArrayList;
+import bitcamp.myapp.util.LinkedList;
+import bitcamp.myapp.util.List;
 import bitcamp.myapp.util.Prompt;
+import bitcamp.myapp.util.Stack;
+import java.util.HashMap;
+import java.util.Map;
 
 public class App {
 
+    Map<String, Command> commandMap = new HashMap<>();
 
-    String[] mainMenus = new String[]{"회원", "프로젝트", "게시판", "공지사항", "도움말", "종료"};
-    String[][] subMenus = {{"등록", "목록", "조회", "변경", "삭제"}, {"등록", "목록", "조회", "변경", "삭제"},
-                           {"등록", "목록", "조회", "변경", "삭제"}, {"등록", "목록", "조회", "변경", "삭제"}, {}};
+    String[] mainMenus = new String[]{"회원", "프로젝트", "게시판", "도움말", "명령내역", "종료"};
 
-    UserCommand userCommand = new UserCommand("회원");
-    BoardCommand boardCommand = new BoardCommand("게시판");
-    BoardCommand noticeCommand = new BoardCommand("공지사항");
-    ProjectCommand projectCommand = new ProjectCommand("프로젝트", userCommand.getUserList());
-    HelpCommand helpCommand = new HelpCommand();
+    Stack menuPath = new Stack();
+
+    public App() {
+        List userList = new ArrayList();
+        List projectList = new LinkedList();
+        List boardList = new LinkedList();
+
+        commandMap.put("회원", new UserCommand("회원", userList));
+        commandMap.put("게시판", new BoardCommand("게시판", boardList));
+        commandMap.put("프로젝트", new ProjectCommand("프로젝트", userList, projectList));
+        commandMap.put("도움말", new HelpCommand());
+        commandMap.put("명령내역", new HistoryCommand());
+    }
 
     public static void main(String[] args) {
         new App().execute();
     }
 
     void execute() {
+        menuPath.push("메인");
         printMenu();
 
         String command;
         while (true) {
             try {
-                command = Prompt.input("메인>");
+                command = Prompt.input("%s>", getMenuPathTitle(menuPath));
 
                 if (command.equals("menu")) {
                     printMenu();
@@ -41,7 +58,7 @@ public class App {
                     } else if (menuTitle.equals("종료")) {
                         break;
                     } else {
-                        processMenu(menuTitle, subMenus[menuNo - 1]);
+                        processMenu(menuTitle);
                     }
                 }
             } catch (NumberFormatException ex) {
@@ -85,44 +102,24 @@ public class App {
         return isValidateMenu(menuNo, menus) ? menus[menuNo - 1] : null;
     }
 
-    void processMenu(String menuTitle, String[] menus) {
-        while (true) {
-            String command = Prompt.input(String.format("메인/%s>", menuTitle));
-            if (command.equals("menu")) {
-                continue;
-            } else if (command.equals("9")) { // 이전 메뉴 선택
-                break;
-            }
-
-            try {
-                int menuNo = Integer.parseInt(command);
-                String subMenuTitle = getMenuTitle(menuNo, menus);
-                if (subMenuTitle == null) {
-                    System.out.println("유효한 메뉴 번호가 아닙니다.");
-                } else {
-                    switch (menuTitle) {
-                        case "회원":
-                            userCommand.execute();
-                            break;
-                        case "프로젝트":
-                            projectCommand.execute();
-                            break;
-                        case "게시판":
-                            boardCommand.execute();
-                            break;
-                        case "공지사항":
-                            noticeCommand.execute();
-                            break;
-                        case "도움말":
-                            helpCommand.execute();
-                            break;
-                        default:
-                            System.out.printf("%s 메뉴의 명령을 처리할 수 없습니다.\n", menuTitle);
-                    }
-                }
-            } catch (NumberFormatException ex) {
-                System.out.println("숫자로 메뉴 번호를 입력하세요.");
-            }
+    void processMenu(String menuTitle) {
+        Command command = commandMap.get(menuTitle);
+        if (command == null) {
+            System.out.printf("%s 메뉴의 명령을 처리할 수 없습니다.\n", menuTitle);
+            return;
         }
+        command.execute(menuPath);
+    }
+
+
+    private String getMenuPathTitle(Stack menuPath) {
+        StringBuilder strBuilder = new StringBuilder();
+        for (int i = 0; i < menuPath.size(); i++) {
+            if (strBuilder.length() > 0) {
+                strBuilder.append("/");
+            }
+            strBuilder.append(menuPath.get(i));
+        }
+        return strBuilder.toString();
     }
 }

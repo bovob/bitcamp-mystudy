@@ -1,15 +1,83 @@
 package testcamp.myapp.vo;
 
-// User 명세
-// VO -> 리터럴이라고 보면된다. 거의 변하지 않는 값 getter만 주로 쓴다.
-// Read-Only 속성을 가진 값 오브젝트이다.
-// DTO -> 인스턴스라고 보면된다. 값을 교환하기 위한 Java Bean을 의미한다.
-// 로직을 가지지 않는 데이터 객체이며 getter, setter 메소드만 가진 클래스를 의미한다.
+import java.util.Objects;
 
+// 메모리 설계도
 public class User {
 
+    private static int seqNo;
+
+    private int no;
     private String name;
     private String email;
     private String password;
     private String tel;
+
+    public User() {
+    }
+
+    public User(int no) {
+        this.no = no;
+    }
+
+    public static int getNextSeqNo() {
+        return ++seqNo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return no == user.no;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(no);
+    }
+
+    public int getNo() {
+        return no;
+    }
+
+    public void setNo(int no) {
+        this.no = no;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
 }
