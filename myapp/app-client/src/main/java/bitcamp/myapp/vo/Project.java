@@ -7,81 +7,85 @@ import java.util.Objects;
 
 public class Project implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private int no;
-  private String title;
-  private String description;
-  private String startDate;
-  private String endDate;
-  private List<User> members = new ArrayList<>();
-  ;
+    private int no;
+    private String title;
+    private String description;
+    private String startDate;
+    private String endDate;
+    private List<User> members = new ArrayList<>();
+    ;
 
-  public Project() {
-  }
-
-  public Project(int no) {
-    this.no = no;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public Project() {
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public Project(int no) {
+        this.no = no;
     }
-    Project project = (Project) o;
-    return no == project.no;
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(no);
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Project project = (Project) o;
+        return no == project.no;
+    }
 
-  public int getNo() {
-    return no;
-  }
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(no);
+    }
 
-  public void setNo(int no) {
-    this.no = no;
-  }
+    public int getNo() {
+        return no;
+    }
 
-  public String getTitle() {
-    return title;
-  }
+    public void setNo(int no) {
+        this.no = no;
+    }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+    public String getTitle() {
+        return title;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public String getStartDate() {
-    return startDate;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setStartDate(String startDate) {
-    this.startDate = startDate;
-  }
+    public String getStartDate() {
+        return startDate;
+    }
 
-  public String getEndDate() {
-    return endDate;
-  }
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
 
-  public void setEndDate(String endDate) {
-    this.endDate = endDate;
-  }
+    public String getEndDate() {
+        return endDate;
+    }
 
-  public List<User> getMembers() {
-    return members;
-  }
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public List<User> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<User> members) {
+        this.members = members;
+    }
 }

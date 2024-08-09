@@ -32,7 +32,6 @@ public class BoardViewCommand implements Command {
             System.out.printf("조회수: %d\n", board.getViewCount());
 
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("조회 중 오류 발생!");
         }
     }
