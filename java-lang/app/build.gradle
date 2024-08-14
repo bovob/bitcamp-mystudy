@@ -9,8 +9,24 @@ repositories {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/org.apache.poi/poi
+    // https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
+    // Maria JDBC Driver
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
+
+    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+    // MySQL JDBC Driver
+    implementation 'com.mysql:mysql-connector-j:8.4.0'
+
+    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc11
+    // Oracle JDBC Driver
+    implementation 'com.oracle.database.jdbc:ojdbc11:21.15.0.0'
     
+    // https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc
+    // MSSQL JDBC Driver
+    implementation 'com.microsoft.sqlserver:mssql-jdbc:12.8.0.jre11'
+        
+
+    // https://mvnrepository.com/artifact/org.apache.poi/poi
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation libs.guava

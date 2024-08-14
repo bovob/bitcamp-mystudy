@@ -2,6 +2,7 @@ package bitcamp.myapp;
 
 import bitcamp.context.ApplicationContext;
 import bitcamp.listener.ApplicationListener;
+import bitcamp.myapp.listener.AuthApplicationListener;
 import bitcamp.myapp.listener.InitApplicationListener;
 import bitcamp.util.Prompt;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class ClientApp {
 
         // 애플리케이션이 시작되거나 종료될 때 알림 받을 객체의 연락처를 등록한다.
         app.addApplicationListener(new InitApplicationListener());
+        app.addApplicationListener(new AuthApplicationListener());
 
         app.execute();
     }
@@ -32,17 +34,17 @@ public class ClientApp {
     void execute() {
 
         try {
-            appCtx.setAttribute("url",
-                "jdbc:mysql://localhost/studydb"/*Prompt.input("DBMS URL?")*/);
-            appCtx.setAttribute("username", "study"/*Prompt.input("ID?")*/);
-            appCtx.setAttribute("password", "1111"/*Prompt.input("PW?")*/);
-
             // 애플리케이션이 시작될 때 리스너에게 알린다.
             for (ApplicationListener listener : listeners) {
                 try {
-                    listener.onStart(appCtx);
-                } catch (Exception e) {
+                    if (!listener.onStart(appCtx)) {
+                        System.out.println("종료합니다.");
+                        return;
+                    }
+                }
+                catch (Exception e) {
                     System.out.println("리스너 실행 중 오류 발생!");
+                    e.printStackTrace();
                 }
             }
 
@@ -50,7 +52,8 @@ public class ClientApp {
 
             appCtx.getMainMenu().execute();
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             System.out.println("실행 오류!");
             ex.printStackTrace();
         }
@@ -63,7 +66,8 @@ public class ClientApp {
         for (ApplicationListener listener : listeners) {
             try {
                 listener.onShutdown(appCtx);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.out.println("리스너 실행 중 오류 발생!");
             }
         }
