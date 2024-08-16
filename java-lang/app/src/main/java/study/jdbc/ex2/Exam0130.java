@@ -1,5 +1,5 @@
 // 게시물 관리 - 조회
-package com.eomcs.jdbc.ex2;
+package study.jdbc.ex2;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,11 +27,11 @@ public class Exam0130 {
       no = keyScan.nextLine();
     }
 
-    try (Connection con = DriverManager.getConnection( 
-        "jdbc:mysql://localhost:3306/studydb", "study", "Bitcamp!@#123");
+    try (
+        Connection con =
+            DriverManager.getConnection("jdbc:mysql://localhost:3306/studydb", "study", "1111");
         Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery( 
-            "select * from x_board where board_id = " + no)) {
+        ResultSet rs = stmt.executeQuery("select * from x_board where board_id = " + no)) {
 
       if (rs.next()) {
         // 레코드에서 컬럼 값을 꺼낼 때 컬럼 번호를 지정하는 것 보다

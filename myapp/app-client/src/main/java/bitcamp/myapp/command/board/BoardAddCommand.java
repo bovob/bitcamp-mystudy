@@ -30,6 +30,7 @@ public class BoardAddCommand implements Command {
         }
         catch (Exception e) {
             System.out.println("등록 중 오류 발생!");
+            e.printStackTrace();
         }
     }
 
