@@ -6,10 +6,10 @@ import bitcamp.context.ApplicationContext;
 //
 public interface ApplicationListener {
 
-    default boolean onStart(ApplicationContext ctx) throws Exception {
-        return true;
-    } // 애플리케이션이 시작될 때 호출됨
+  default boolean onStart(ApplicationContext ctx) throws Exception {
+    return true;
+  } // 애플리케이션이 시작될 때 호출됨
 
-    default void onShutdown(ApplicationContext ctx) throws Exception {
-    } // 애플리케이션이 종료될 때 호출됨
+  default void onShutdown(ApplicationContext ctx) throws Exception {
+  } // 애플리케이션이 종료될 때 호출됨
 }
