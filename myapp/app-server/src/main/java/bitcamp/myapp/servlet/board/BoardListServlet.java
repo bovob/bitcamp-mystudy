@@ -18,61 +18,68 @@ public class BoardListServlet implements Servlet {
     public void init(ServletConfig config) throws ServletException {
         this.config = config;
 
-        ServletContext ctx = config.getServletContext();
-        boardDao = (BoardDao) ctx.getAttribute("boardDao");
-    }
-
-    @Override
-    public ServletConfig getServletConfig() {
-        return this.config;
+        boardDao = (BoardDao) config.getServletContext().getAttribute("boardDao");
     }
 
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+        res.setContentType("text/html;charset=UTF-8");
 
-        res.setContentType("text/html;charset=utf-8");
-        // " 대신 ' 를 써도됨
         PrintWriter out = res.getWriter();
         out.println("<!DOCTYPE html>");
         out.println("<html>");
         out.println("<head>");
         out.println("    <meta charset='UTF-8'>");
         out.println("    <title>Title</title>");
+        out.println("<link href='/css/common.css' rel='stylesheet'>");
         out.println("</head>");
         out.println("<body>");
 
         try {
-            out.println("<h1>게시판목록</h1>");
+            out.println("<header>");
+            out.println("  <a href='/'><img src='/images/home.png'></a>");
+            out.println("        프로젝트 관리 시스템");
+            out.println("</header>");
+            out.println("<h1>게시글 목록</h1>");
+            out.println("<p><a href='/board/form.html'> 새 게시글 </a></p>");
             out.println("<table border='1'>");
-            out.println("<thead><tr><th>번호</th><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr></thead>");
-            out.println("<tbody>");
+            out.println("  <thead>");
+            out.println("      <tr><th>번호</th><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr>");
+            out.println("  </thead>");
+            out.println("  <tbody>");
+
             for (Board board : boardDao.list()) {
-                out.printf("<tr><td>%d</td> <td><a href='/board/view?no=%1$d'>%s</a></td> <td>%s</td> <td>%tY-%4$tm-%4$td</td> <td></td> </tr>\n",
+                out.printf("      <tr><td>%d</td><td><a href='/board/view?no=%1$d'>%s</a></td><td>%s</td><td>%tY-%4$tm-%4$td</td><td>%d</td></tr>\n",
                         board.getNo(),
                         board.getTitle(),
                         board.getWriter().getName(),
                         board.getCreatedDate(),
                         board.getViewCount());
             }
-            out.println("</tbody>");
+
+            out.println("  </tbody>");
             out.println("</table>");
 
         } catch (Exception e) {
-            out.println("목록 조회 중 오류 발생!");
+            out.println("<p>목록 조회 중 오류 발생!</p>");
+            e.printStackTrace();
         }
+
         out.println("</body>");
         out.println("</html>");
     }
 
     @Override
-    public String getServletInfo() {
-        return "게시판 목록 조회";
+    public void destroy() {
     }
 
     @Override
-    public void destroy() {
-
+    public String getServletInfo() {
+        return "게시글 목록 조회";
     }
 
-
+    @Override
+    public ServletConfig getServletConfig() {
+        return this.config;
+    }
 }

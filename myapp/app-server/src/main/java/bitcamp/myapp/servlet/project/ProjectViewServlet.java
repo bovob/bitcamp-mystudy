@@ -19,12 +19,13 @@ public class ProjectViewServlet extends GenericServlet {
 
     @Override
     public void init() throws ServletException {
+        // 서블릿 컨테이너 ---> init(ServletConfig) ---> init() 호출한다.
         projectDao = (ProjectDao) this.getServletContext().getAttribute("projectDao");
     }
 
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/html;charset=utf-8");
+        res.setContentType("text/html;charset=UTF-8");
 
         PrintWriter out = res.getWriter();
         out.println("<!DOCTYPE html>");
@@ -32,31 +33,43 @@ public class ProjectViewServlet extends GenericServlet {
         out.println("<head>");
         out.println("    <meta charset='UTF-8'>");
         out.println("    <title>Title</title>");
+        out.println("<link href='/css/common.css' rel='stylesheet'>");
         out.println("</head>");
         out.println("<body>");
 
         try {
-            out.printf("<h1>프로젝트 조회</h1>");
+            out.println("<header>");
+            out.println("  <a href='/'><img src='/images/home.png'></a>");
+            out.println("        프로젝트 관리 시스템");
+            out.println("</header>");
+            out.println("<h1>프로젝트 조회</h1>");
+
             int projectNo = Integer.parseInt(req.getParameter("no"));
 
             Project project = projectDao.findBy(projectNo);
             if (project == null) {
                 out.println("<p>없는 프로젝트입니다.</p>");
+                out.println("</body>");
+                out.println("</html>");
                 return;
             }
 
-            out.printf("프로젝트명: %s\n", project.getTitle());
-            out.printf("설명: %s\n", project.getDescription());
-            out.printf("기간: %s ~ %s\n", project.getStartDate(), project.getEndDate());
+            out.printf("<p>프로젝트명: %s</p>\n", project.getTitle());
+            out.printf("<p>설명: %s</p>\n", project.getDescription());
+            out.printf("<p>기간: %s ~ %s</p>\n", project.getStartDate(), project.getEndDate());
 
-            out.println("팀원:");
+            out.println("<p>팀원:</p>");
+            out.println("<ul>");
             for (User user : project.getMembers()) {
-                out.printf("- %s\n", user.getName());
+                out.printf("<li>%s</li>\n", user.getName());
             }
+            out.println("</ul>");
+
         } catch (Exception e) {
             out.println("<p>조회 중 오류 발생!</p>");
         }
-        out.println("</head>");
+
+        out.println("</body>");
         out.println("</html>");
     }
 }
