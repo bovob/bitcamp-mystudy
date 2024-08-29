@@ -52,10 +52,16 @@ public class UserViewServlet extends GenericServlet {
                 out.println("</html>");
                 return;
             }
-            out.printf("<p>이름: %s</p>\n", user.getName());
-            out.printf("<p>이메일: %s</p>\n", user.getEmail());
-            out.printf("<p>연락처: %s</p>\n", user.getTel());
 
+            out.println("<form action='/user/update'>");
+            out.printf("번호: <input name='no' readonly='readonly' type='text' value='%d'><br>", user.getNo());
+            out.printf("이름: <input name='name' type='text' value='%s'><br>", user.getName());
+            out.printf("이메일: <input name='email' type='email' value='%s'><br>", user.getEmail());
+            out.printf("암호: <input name='password' type='password'><br>");
+            out.printf("연락처: <input name='tel' type='tel' value='%s'><br>", user.getTel());
+            out.println("<button>변경</button>");
+            out.printf("<button type='button' onclick='location.href=\"/user/delete?no=%d\"'>삭제</button>\n", user.getNo());
+            out.println("</form>");
         } catch (Exception e) {
             out.println("<p>조회 중 오류 발생!</p>");
         }

@@ -1,10 +1,69 @@
 header {
     border-bottom: 1px solid gray;
+    position : relative;
 }
 
 header img {
     height: 20px;
     vertical-align: middle;
+}
+
+header > h1 {
+    display : inline;
+    font-size : 14px;
+}
+
+header > nav {
+    display : inline;
+}
+
+header > nav > ul {
+    display : inline;
+    list-style-type : none;
+}
+
+.btn {
+    display : inline-block;
+    width : 70px;
+    height : 14px;
+    text-align : center;
+    padding-top: 3px;
+    text-decoration : none;
+    color : black;
+    font-weight : bold;
+    font-size : 10px;
+}
+
+.btn a {
+    text-decoration : none;
+    color : #000000;
+}
+
+.btn-default {
+    background : DarkGray;
+}
+
+.btn-light {
+    background : white;
+}
+
+.btn-primary {
+    background : navy;
+    color : white;
+}
+
+.btn-secondary {
+    background : darkgreen;
+    color : white;
+}
+
+.pos-right {
+    position: absolute;
+    right: 0px;
+}
+
+.login-state{
+    display: inline;
 }
 
 table {

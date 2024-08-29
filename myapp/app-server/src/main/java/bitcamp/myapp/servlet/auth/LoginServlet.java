@@ -9,6 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,21 +30,9 @@ public class LoginServlet extends GenericServlet {
         res.setContentType("text/html;charset=UTF-8");
 
         PrintWriter out = res.getWriter();
-        out.println("<!DOCTYPE html>");
-        out.println("<html>");
-        out.println("<head>");
-        out.println("    <meta charset='UTF-8'>");
-        out.println("    <title>Title</title>");
-        out.println("<link href='/css/common.css' rel='stylesheet'>");
-        out.println("</head>");
-        out.println("<body>");
+        req.getRequestDispatcher("/header").include(req, res);
 
         try {
-            out.println("<header>");
-            out.println("  <a href='/'><img src='/images/home.png'></a>");
-            out.println("        프로젝트 관리 시스템");
-            out.println("    <meta http-equiv='refresh' content='1;url=/'>");
-            out.println("</header>");
             out.println("<h1>로그인결과</h1>");
 
             String email = req.getParameter("email");
@@ -52,6 +41,7 @@ public class LoginServlet extends GenericServlet {
             User user = userDao.findByEmailAndPassword(email, password);
             if (user == null) {
                 out.println("<p>이메일 또는 암호가 맞지 않습니다.</p>");
+                ((HttpServletResponse) res).setHeader("Refresh", "1;url=/auth/form");
                 out.println("</body>");
                 out.println("</html>");
                 return;
@@ -74,5 +64,6 @@ public class LoginServlet extends GenericServlet {
 
         out.println("</body>");
         out.println("</html>");
+        ((HttpServletResponse) res).sendRedirect("/");
     }
 }
