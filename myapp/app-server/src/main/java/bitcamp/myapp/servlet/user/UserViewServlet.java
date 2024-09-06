@@ -3,16 +3,15 @@ package bitcamp.myapp.servlet.user;
 import bitcamp.myapp.dao.UserDao;
 import bitcamp.myapp.vo.User;
 
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/user/view")
-public class UserViewServlet extends GenericServlet {
+public class UserViewServlet extends HttpServlet {
 
     private UserDao userDao;
 
@@ -23,50 +22,18 @@ public class UserViewServlet extends GenericServlet {
     }
 
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/html;charset=UTF-8");
-
-        PrintWriter out = res.getWriter();
-        out.println("<!DOCTYPE html>");
-        out.println("<html>");
-        out.println("<head>");
-        out.println("    <meta charset='UTF-8'>");
-        out.println("    <title>Title</title>");
-        out.println("<link href='/css/common.css' rel='stylesheet'>");
-        out.println("</head>");
-        out.println("<body>");
-
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
-            out.println("<header>");
-            out.println("  <a href='/'><img src='/images/home.png'></a>");
-            out.println("        프로젝트 관리 시스템");
-            out.println("</header>");
-            out.println("<h1>회원 조회</h1>");
-
             int userNo = Integer.parseInt(req.getParameter("no"));
-
             User user = userDao.findBy(userNo);
-            if (user == null) {
-                out.println("<p>없는 회원입니다.</p>");
-                out.println("</body>");
-                out.println("</html>");
-                return;
-            }
+            req.setAttribute("user", user);
 
-            out.println("<form action='/user/update'>");
-            out.printf("번호: <input name='no' readonly='readonly' type='text' value='%d'><br>", user.getNo());
-            out.printf("이름: <input name='name' type='text' value='%s'><br>", user.getName());
-            out.printf("이메일: <input name='email' type='email' value='%s'><br>", user.getEmail());
-            out.printf("암호: <input name='password' type='password'><br>");
-            out.printf("연락처: <input name='tel' type='tel' value='%s'><br>", user.getTel());
-            out.println("<button>변경</button>");
-            out.printf("<button type='button' onclick='location.href=\"/user/delete?no=%d\"'>삭제</button>\n", user.getNo());
-            out.println("</form>");
+            res.setContentType("text/html;charset=UTF-8");
+            req.getRequestDispatcher("/user/view.jsp").include(req, res);
+
         } catch (Exception e) {
-            out.println("<p>조회 중 오류 발생!</p>");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
-
-        out.println("</body>");
-        out.println("</html>");
     }
 }

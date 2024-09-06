@@ -3,67 +3,61 @@ package bitcamp.myapp.servlet.auth;
 import bitcamp.myapp.dao.UserDao;
 import bitcamp.myapp.vo.User;
 
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/auth/login")
-public class LoginServlet extends GenericServlet {
+public class LoginServlet extends HttpServlet {
 
     private UserDao userDao;
 
     @Override
     public void init() throws ServletException {
-        // 서블릿 컨테이너 ---> init(ServletConfig) ---> init() 호출한다.
         userDao = (UserDao) this.getServletContext().getAttribute("userDao");
     }
 
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/html;charset=UTF-8");
+        req.getRequestDispatcher("/auth/form.jsp").include(req, res);
+    }
 
-        PrintWriter out = res.getWriter();
-        req.getRequestDispatcher("/header").include(req, res);
-
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
-            out.println("<h1>로그인결과</h1>");
-
             String email = req.getParameter("email");
             String password = req.getParameter("password");
 
             User user = userDao.findByEmailAndPassword(email, password);
             if (user == null) {
-                out.println("<p>이메일 또는 암호가 맞지 않습니다.</p>");
-                ((HttpServletResponse) res).setHeader("Refresh", "1;url=/auth/form");
-                out.println("</body>");
-                out.println("</html>");
+                res.setHeader("Refresh", "1;url=/auth/login");
+                res.setContentType("text/html;charset=UTF-8");
+                req.getRequestDispatcher("/auth/fail.jsp").include(req, res);
                 return;
             }
-            // HTTP 프로토콜 관련 기능을 사용하려면
-            // 파라미터로 받은 ServletRequest 객체를 원래 타입으로 형변환 해야 한다.
-            // 즉 req 레퍼런스는 실제 HTTPServletRequest 객체를 가리키고 있다.
-            HttpServletRequest httpReq = (HttpServletRequest) req;
 
-            // 클라이언트 전용 보관소를 알아낸다.
+            if (req.getParameter("saveEmail") != null) {
+                Cookie cookie = new Cookie("email", email);
+                // 1분 * 1시간 * 하루 * 일주일
+                cookie.setMaxAge(60 * 60 * 24 * 7);
+                res.addCookie(cookie);
+            } else {
+                Cookie cookie = new Cookie("email", "test@test.com");
+                cookie.setMaxAge(0);
+                res.addCookie(cookie);
+            }
+
+            HttpServletRequest httpReq = req;
             HttpSession session = httpReq.getSession();
-
-            // 클라이언트 전용 보관소에 로그인 사용자 정보를 보관한다.
             session.setAttribute("loginUser", user);
-            out.println("<p>로그인 성공입니다.</p>");
+            res.sendRedirect("/");
+
 
         } catch (Exception e) {
-            out.println("<p>조회 중 오류 발생!</p>");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
-
-        out.println("</body>");
-        out.println("</html>");
-        ((HttpServletResponse) res).sendRedirect("/");
     }
 }

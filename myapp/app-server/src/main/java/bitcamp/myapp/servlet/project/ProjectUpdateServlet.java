@@ -5,19 +5,17 @@ import bitcamp.myapp.vo.Project;
 import bitcamp.myapp.vo.User;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.ArrayList;
 
 @WebServlet("/project/update")
-public class ProjectUpdateServlet extends GenericServlet {
+public class ProjectUpdateServlet extends HttpServlet {
 
     private ProjectDao projectDao;
     private SqlSessionFactory sqlSessionFactory;
@@ -29,16 +27,9 @@ public class ProjectUpdateServlet extends GenericServlet {
     }
 
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/html;charset=UTF-8");
-
-        PrintWriter out = res.getWriter();
-        req.getRequestDispatcher("/header").include(req, res);
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
             Project project = new Project();
-            out.println("<h1>프로젝트 변경결과</h1>");
-
             project.setNo(Integer.parseInt(req.getParameter("no")));
             project.setTitle(req.getParameter("title"));
             project.setDescription(req.getParameter("description"));
@@ -55,27 +46,21 @@ public class ProjectUpdateServlet extends GenericServlet {
             }
 
             if (!projectDao.update(project)) {
-                out.println("<p>없는 프로젝트 입니다.</p>");
-                out.println("</body>");
-                out.println("</html>");
-                return;
+                throw new Exception("없는 프로젝트입니다!");
             }
 
             projectDao.deleteMembers(project.getNo());
-
             if (project.getMembers() != null && project.getMembers().size() > 0) {
                 projectDao.insertMembers(project.getNo(), project.getMembers());
             }
             sqlSessionFactory.openSession(false).commit();
-            out.println("<p>변경 했습니다.</p>");
+            ((HttpServletResponse) res).sendRedirect("/project/list");
 
         } catch (Exception e) {
             sqlSessionFactory.openSession(false).rollback();
-            out.println("<p>변경 중 오류 발생!</p>");
-            e.printStackTrace();
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
-        out.println("</body>");
-        out.println("</html>");
-        ((HttpServletResponse) res).setHeader("Refresh", "1;url=/project/list");
     }
+
 }

@@ -1,6 +1,7 @@
 package bitcamp.myapp.listener;
 
-import mybatis.SqlSessionFactoryProxy;
+
+import bitcamp.mybatis.SqlSessionFactoryProxy;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import javax.servlet.ServletContext;

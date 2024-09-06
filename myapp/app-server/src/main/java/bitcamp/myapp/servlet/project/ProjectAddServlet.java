@@ -1,22 +1,25 @@
 package bitcamp.myapp.servlet.project;
 
 import bitcamp.myapp.dao.ProjectDao;
+import bitcamp.myapp.dao.UserDao;
 import bitcamp.myapp.vo.Project;
 import bitcamp.myapp.vo.User;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import javax.servlet.*;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Date;
-import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/project/add")
-public class ProjectAddServlet extends GenericServlet {
+public class ProjectAddServlet extends HttpServlet {
 
     private ProjectDao projectDao;
+    private UserDao userDao;
     private SqlSessionFactory sqlSessionFactory;
 
     @Override
@@ -24,47 +27,44 @@ public class ProjectAddServlet extends GenericServlet {
         ServletContext ctx = this.getServletContext();
         this.projectDao = (ProjectDao) ctx.getAttribute("projectDao");
         this.sqlSessionFactory = (SqlSessionFactory) ctx.getAttribute("sqlSessionFactory");
+        userDao = (UserDao) this.getServletContext().getAttribute("userDao");
+    }
+
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        try {
+            List<User> users = userDao.list();
+            req.setAttribute("users", users);
+
+            res.setContentType("text/html;charset=UTF-8");
+            req.getRequestDispatcher("/project/form.jsp").include(req, res);
+
+        } catch (Exception e) {
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
+        }
     }
 
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/html;charset=UTF-8");
-
-        PrintWriter out = res.getWriter();
-        req.getRequestDispatcher("/header").include(req, res);
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
-            Project project = new Project();
-            out.println("<h1>프로젝트 등록결과</h1>");
-            project.setTitle(req.getParameter("title"));
-            project.setDescription(req.getParameter("description"));
-            project.setStartDate(Date.valueOf(req.getParameter("startDate")));
-            project.setEndDate(Date.valueOf(req.getParameter("endDate")));
-
-            String[] memberNos = req.getParameterValues("member");
-            if (memberNos != null) {
-                ArrayList<User> members = new ArrayList<>();
-                for (String memberNo : memberNos) {
-                    members.add(new User(Integer.parseInt(memberNo)));
-                }
-                project.setMembers(members);
-            }
-
+            Project project = (Project) req.getSession().getAttribute("project");
             projectDao.insert(project);
 
             if (project.getMembers() != null && project.getMembers().size() > 0) {
                 projectDao.insertMembers(project.getNo(), project.getMembers());
             }
             sqlSessionFactory.openSession(false).commit();
-            out.println("<p>등록 성공입니다.</p>");
+            res.sendRedirect("/project/list");
+
+            // 세션에서 보관했던 Project 객체를 제거한다.
+            req.getSession().removeAttribute("project");
 
         } catch (Exception e) {
             sqlSessionFactory.openSession(false).rollback();
-            out.println("<p>등록 중 오류 발생!</p>");
-            e.printStackTrace();
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
-        out.println("</body>");
-        out.println("</html>");
-        ((HttpServletResponse) res).setHeader("Refresh", "1;url=/project/list");
     }
 }

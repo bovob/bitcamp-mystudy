@@ -4,14 +4,16 @@ import bitcamp.myapp.dao.UserDao;
 import bitcamp.myapp.vo.User;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import javax.servlet.*;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/user/add")
-public class UserAddServlet extends GenericServlet {
+public class UserAddServlet extends HttpServlet {
 
     private UserDao userDao;
     private SqlSessionFactory sqlSessionFactory;
@@ -24,14 +26,14 @@ public class UserAddServlet extends GenericServlet {
     }
 
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = res.getWriter();
+        req.getRequestDispatcher("/user/form.jsp").include(req, res);
+    }
 
-        req.getRequestDispatcher("/header").include(req, res);
-
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
-
             User user = new User();
             user.setName(req.getParameter("name"));
             user.setEmail(req.getParameter("email"));
@@ -40,16 +42,12 @@ public class UserAddServlet extends GenericServlet {
 
             userDao.insert(user);
             sqlSessionFactory.openSession(false).commit();
-            out.println("<p>등록 성공입니다.</p>");
-
+            res.sendRedirect("/user/list");
 
         } catch (Exception e) {
             sqlSessionFactory.openSession(false).rollback();
-            out.println("<p>등록 중 오류 발생!</p>");
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
-        out.println("</body>");
-        out.println("</html>");
-
-        ((HttpServletResponse) res).setHeader("Refresh", "1;url=/user/list");
     }
 }

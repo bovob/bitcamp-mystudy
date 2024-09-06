@@ -4,40 +4,29 @@ import bitcamp.myapp.dao.UserDao;
 import bitcamp.myapp.vo.User;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/user/update")
-public class UserUpdateServlet extends GenericServlet {
+public class UserUpdateServlet extends HttpServlet {
 
     private UserDao userDao;
     private SqlSessionFactory sqlSessionFactory;
 
     @Override
     public void init() throws ServletException {
-        // 서블릿 컨테이너 ---> init(ServletConfig) ---> init() 호출한다.
         this.userDao = (UserDao) this.getServletContext().getAttribute("userDao");
         this.sqlSessionFactory = (SqlSessionFactory) this.getServletContext().getAttribute("sqlSessionFactory");
     }
 
+
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/html;charset=UTF-8");
-
-        PrintWriter out = res.getWriter();
-
-        req.getRequestDispatcher("/header").include(req, res);
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
-
-            out.println("<h1>회원 변경</h1>");
-
             User user = new User();
             user.setNo(Integer.parseInt(req.getParameter("no")));
             user.setName(req.getParameter("name"));
@@ -47,20 +36,16 @@ public class UserUpdateServlet extends GenericServlet {
 
             if (userDao.update(user)) {
                 sqlSessionFactory.openSession(false).commit();
-                out.println("<p>변경 했습니다.</p>");
+                ((HttpServletResponse) res).sendRedirect("/user/list");
             } else {
-                out.println("<p>없는 회원입니다</p>");
+                throw new Exception("없는 회원입니다!");
             }
 
         } catch (Exception e) {
-            out.println("<p>조회 중 오류 발생!</p>");
             sqlSessionFactory.openSession(false).rollback();
+            req.setAttribute("exception", e);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
-
-        out.println("</body>");
-        out.println("</html>");
-
-        ((HttpServletResponse) res).setHeader("Refresh", "1;url=/user/list");
     }
 
 }
