@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
-@WebServlet("/board/delete")
-public class BoardDeleteServlet extends HttpServlet {
+@WebServlet("/board/file/delete")
+public class BoardFileDeleteServlet extends HttpServlet {
 
     private BoardDao boardDao;
     private SqlSessionFactory sqlSessionFactory;
@@ -31,26 +31,30 @@ public class BoardDeleteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
-            User loginUser = (User) ((HttpServletRequest) req).getSession().getAttribute("loginUser");
-            int boardNo = Integer.parseInt(req.getParameter("no"));
-            Board board = boardDao.findBy(boardNo);
+            User loginUser = (User) req.getSession().getAttribute("loginUser");
+            if (loginUser == null) {
+                throw new Exception("로그인 하지 않았습니다.");
+            }
 
-            if (board == null) {
-                throw new Exception("없는 게시글입니다.");
-            } else if (loginUser == null || loginUser.getNo() > 10 && board.getWriter().getNo() != loginUser.getNo()) {
+            int fileNo = Integer.parseInt(req.getParameter("fileNo"));
+            AttachedFile attachedFile = boardDao.getFile(fileNo);
+            if (attachedFile == null) {
+                throw new Exception("없는 첨부파일 입니다.");
+            }
+
+            Board board = boardDao.findBy(attachedFile.getBoardNo());
+            if (loginUser.getNo() > 10 && board.getWriter().getNo() != loginUser.getNo()) {
                 throw new Exception("삭제 권한이 없습니다.");
             }
 
-            for (AttachedFile attachedFile : board.getAttachedFiles()) {
-                File file = new File(uploadDir + "/" + attachedFile.getFilename());
-                if (file.exists()) {
-                    file.delete();
-                }
+            File file = new File(uploadDir + "/" + attachedFile.getFilename());
+            if (file.exists()) {
+                file.delete();
             }
-            boardDao.deleteFiles(boardNo);
-            boardDao.delete(boardNo);
+
+            boardDao.deleteFile(fileNo);
             sqlSessionFactory.openSession(false).commit();
-            res.sendRedirect("/board/list");
+            res.sendRedirect("/board/view?no=" + req.getParameter("boardNo"));
 
         } catch (Exception e) {
             sqlSessionFactory.openSession(false).rollback();

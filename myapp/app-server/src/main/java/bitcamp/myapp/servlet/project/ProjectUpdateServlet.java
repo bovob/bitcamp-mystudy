@@ -28,6 +28,7 @@ public class ProjectUpdateServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
         try {
             Project project = new Project();
             project.setNo(Integer.parseInt(req.getParameter("no")));
