@@ -2,35 +2,35 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace = "BoardDao">
+<mapper namespace="BoardDao">
 
-    <resultMap id = "BoardMap" type = "board">
-        <id column = "board_id" property = "no"/>
-        <result column = "title" property = "title"/>
-        <result column = "content" property = "content"/>
-        <result column = "created_date" property = "createdDate"/>
-        <result column = "view_count" property = "viewCount"/>
+    <resultMap id="BoardMap" type="board">
+        <id column="board_id" property="no"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="created_date" property="createdDate"/>
+        <result column="view_count" property="viewCount"/>
 
-        <association property = "writer" javaType = "user">
-            <id column = "user_id" property = "no"/>
-            <result column = "name" property = "name"/>
+        <association property="writer" javaType="user">
+            <id column="user_id" property="no"/>
+            <result column="name" property="name"/>
         </association>
 
-        <collection property = "attachedFiles" ofType = "attachedFile">
-            <id column = "board_file_id" property = "fileNo"/>
-            <result column = "filename" property = "filename"/>
-            <result column = "origin_filename" property = "originFilename"/>
+        <collection property="attachedFiles" ofType="attachedFile">
+            <id column="board_file_id" property="fileNo"/>
+            <result column="filename" property="filename"/>
+            <result column="origin_filename" property="originFilename"/>
         </collection>
     </resultMap>
 
-     <resultMap id = "AttachedFileMap" type = "attachedFile">
-        <id column = "board_file_id" property = "fileNo"/>
-        <result column = "filename" property = "filename"/>
-        <result column = "origin_filename" property = "originFilename"/>
-        <result column = "board_id" property = "boardNo"/>
-     </resultMap>
+    <resultMap id="AttachedFileMap" type="attachedFile">
+        <id column="board_file_id" property="fileNo"/>
+        <result column="filename" property="filename"/>
+        <result column="origin_filename" property="originFilename"/>
+        <result column="board_id" property="boardNo"/>
+    </resultMap>
 
-    <select id = "list" resultMap = "BoardMap">
+    <select id="list" resultMap="BoardMap">
         select
             b.board_id,
             b.title,
@@ -44,21 +44,13 @@
             b.board_id asc
     </select>
 
-    <insert id = "insert" parameterType = "board"
-            useGeneratedKeys = "true" keyColumn = "board_id" keyProperty = "no">
+    <insert id="insert" parameterType="board"
+            useGeneratedKeys="true" keyColumn="board_id" keyProperty="no">
         insert into myapp_boards(title, content, user_id)
         values (#{title}, #{content}, #{writer.no})
     </insert>
 
-    <insert id = "insertFiles" parameterType = "board">
-        insert into myapp_board_files(filename, origin_filename, board_id)
-        values
-         <foreach collection = "attachedFiles" item = "attachedFile" separator = ",">
-                (#{attachedFile.filename}, #{attachedFile.originFilename}, #{no})
-        </foreach>
-    </insert>
-
-    <select id = "findBy" resultMap = "BoardMap" parameterType = "int">
+    <select id="findBy" resultMap="BoardMap" parameterType="int">
         select
             b.board_id,
             b.title,
@@ -78,7 +70,7 @@
             b.board_id=#{no}
     </select>
 
-    <update id = "update" parameterType = "board">
+    <update id="update" parameterType="board">
         update myapp_boards set
             title=#{title},
             content=#{content}
@@ -86,18 +78,26 @@
             board_id=#{no}
     </update>
 
-    <delete id = "delete" parameterType = "int">
+    <delete id="delete" parameterType="int">
         delete from myapp_boards
         where board_id=#{no}
     </delete>
 
-    <update id = "updateViewCount" parameterType = "map">
+    <update id="updateViewCount" parameterType="map">
         update myapp_boards set
             view_count=#{count}
         where board_id=#{no}
     </update>
 
-    <select id = "getFile" parameterType = "int" resultMap = "AttachedFileMap">
+    <insert id="insertFiles" parameterType="board">
+        insert into myapp_board_files(filename, origin_filename, board_id)
+        values
+        <foreach collection="attachedFiles" item="attachedFile" separator=",">
+            (#{attachedFile.filename}, #{attachedFile.originFilename}, #{no})
+        </foreach>
+    </insert>
+
+    <select id="getFile" parameterType="int" resultMap="AttachedFileMap">
         select
             board_file_id,
             filename,
@@ -109,14 +109,13 @@
             board_file_id = #{fileNo}
     </select>
 
-    <delete id = "deleteFile" parameterType = "int">
+    <delete id="deleteFile" parameterType="int">
         delete from myapp_board_files
         where board_file_id = #{fileNo}
     </delete>
 
-    <delete id = "deleteFiles" parameterType = "int">
+    <delete id="deleteFiles" parameterType="int">
         delete from myapp_board_files
         where board_id = #{boardNo}
     </delete>
-
 </mapper>

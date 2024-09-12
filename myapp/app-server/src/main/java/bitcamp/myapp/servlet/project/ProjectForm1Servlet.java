@@ -10,15 +10,8 @@ import java.io.IOException;
 @WebServlet("/project/form1")
 public class ProjectForm1Servlet extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        try {
-            res.setContentType("text/html;charset=UTF-8");
-            req.getRequestDispatcher("/project/form1.jsp").include(req, res);
-
-        } catch (Exception e) {
-            req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, res);
-        }
-    }
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    req.setAttribute("viewName", "/project/form1.jsp");
+  }
 }

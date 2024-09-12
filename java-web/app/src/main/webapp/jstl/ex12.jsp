@@ -26,6 +26,9 @@ Date date2 = (Date)pageContext.getAttribute("d2");
 out.println(date1.toString() + "<br>");
 out.println(date2.toString() + "<br>");
 
+out.println(date1+ "<br>");
+out.println(date2+ "<br>");
+
 %>
 
 </body>

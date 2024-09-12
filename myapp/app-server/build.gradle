@@ -8,6 +8,8 @@ repositories {
 
 dependencies {
     implementation project(':app-common')
+    // https://mvnrepository.com/artifact/javax.servlet/jstl
+    implementation 'javax.servlet:jstl:1.2'
 
     // JDBC Driver
     implementation 'com.mysql:mysql-connector-j:8.4.0'

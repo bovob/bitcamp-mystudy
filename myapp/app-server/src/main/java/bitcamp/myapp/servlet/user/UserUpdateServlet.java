@@ -1,8 +1,7 @@
 package bitcamp.myapp.servlet.user;
 
-import bitcamp.myapp.dao.UserDao;
+import bitcamp.myapp.service.UserService;
 import bitcamp.myapp.vo.User;
-import org.apache.ibatis.session.SqlSessionFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,38 +13,32 @@ import java.io.IOException;
 @WebServlet("/user/update")
 public class UserUpdateServlet extends HttpServlet {
 
-    private UserDao userDao;
-    private SqlSessionFactory sqlSessionFactory;
+  private UserService userService;
 
-    @Override
-    public void init() throws ServletException {
-        this.userDao = (UserDao) this.getServletContext().getAttribute("userDao");
-        this.sqlSessionFactory = (SqlSessionFactory) this.getServletContext().getAttribute("sqlSessionFactory");
+  @Override
+  public void init() throws ServletException {
+    this.userService = (UserService) this.getServletContext().getAttribute("userService");
+  }
+
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    try {
+      User user = new User();
+      user.setNo(Integer.parseInt(req.getParameter("no")));
+      user.setName(req.getParameter("name"));
+      user.setEmail(req.getParameter("email"));
+      user.setPassword(req.getParameter("password"));
+      user.setTel(req.getParameter("tel"));
+
+      if (userService.update(user)) {
+        req.setAttribute("viewName", "redirect:list");
+      } else {
+        throw new Exception("없는 회원입니다!");
+      }
+
+    } catch (Exception e) {
+      req.setAttribute("exception", e);
     }
-
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        try {
-            User user = new User();
-            user.setNo(Integer.parseInt(req.getParameter("no")));
-            user.setName(req.getParameter("name"));
-            user.setEmail(req.getParameter("email"));
-            user.setPassword(req.getParameter("password"));
-            user.setTel(req.getParameter("tel"));
-
-            if (userDao.update(user)) {
-                sqlSessionFactory.openSession(false).commit();
-                ((HttpServletResponse) res).sendRedirect("/user/list");
-            } else {
-                throw new Exception("없는 회원입니다!");
-            }
-
-        } catch (Exception e) {
-            sqlSessionFactory.openSession(false).rollback();
-            req.setAttribute("exception", e);
-            req.getRequestDispatcher("/error.jsp").forward(req, res);
-        }
-    }
+  }
 
 }

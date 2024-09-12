@@ -8,6 +8,9 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/javax.servlet/jstl
+    implementation 'javax.servlet:jstl:1.2'
+    
 
     // Apache commons-file upload 라이브러리
     // Apache multipart/form-dat 처리 라이브러리 
