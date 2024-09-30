@@ -1,72 +1,47 @@
 package bitcamp.myapp.service;
 
-import bitcamp.myapp.annotation.Component;
 import bitcamp.myapp.dao.UserDao;
 import bitcamp.myapp.vo.User;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 public class DefaultUserService implements UserService {
 
-  private UserDao userDao;
-  private SqlSessionFactory sqlSessionFactory;
+    private UserDao userDao;
 
-  public DefaultUserService(UserDao userDao, SqlSessionFactory sqlSessionFactory) {
-    this.userDao = userDao;
-    this.sqlSessionFactory = sqlSessionFactory;
-  }
-
-  public void add(User user) throws Exception {
-    try {
-      userDao.insert(user);
-      sqlSessionFactory.openSession(false).commit();
-
-    } catch (Exception e) {
-      sqlSessionFactory.openSession(false).rollback();
-      throw e;
+    public DefaultUserService(UserDao userDao) {
+        this.userDao = userDao;
     }
-  }
 
-  public List<User> list() throws Exception {
-    return userDao.list();
-  }
-
-  public User get(int userNo) throws Exception {
-    return userDao.findBy(userNo);
-  }
-
-  @Override
-  public User exists(String email, String password) throws Exception {
-    return userDao.findByEmailAndPassword(email, password);
-  }
-
-  public boolean update(User user) throws Exception {
-    try {
-      if (userDao.update(user)) {
-        sqlSessionFactory.openSession(false).commit();
-        return true;
-      } else {
-        return false;
-      }
-    } catch (Exception e) {
-      sqlSessionFactory.openSession(false).rollback();
-      throw e;
+    @Transactional
+    public void add(User user) throws Exception {
+        userDao.insert(user);
     }
-  }
 
-  public boolean delete(int userNo) throws Exception {
-    try {
-      if (userDao.delete(userNo)) {
-        sqlSessionFactory.openSession(false).commit();
-        return true;
-      } else {
-        return false;
-      }
-    } catch (Exception e) {
-      sqlSessionFactory.openSession(false).rollback();
-      throw e;
+    public List<User> list() throws Exception {
+        return userDao.list();
     }
-  }
+
+    public User get(int userNo) throws Exception {
+        return userDao.findBy(userNo);
+    }
+
+    public User exists(String email, String password) throws Exception {
+        return userDao.findByEmailAndPassword(email, password);
+    }
+
+    @Transactional
+    public boolean update(User user) throws Exception {
+        return userDao.update(user);
+    }
+
+    @Transactional
+    public boolean delete(int userNo) throws Exception {
+        // if (userNo != 0) {
+        //     throw new Exception("test1");
+        // }
+        return userDao.delete(userNo);
+    }
 }
